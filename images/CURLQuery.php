@@ -31,13 +31,13 @@ function get_company_image_from_string($company_name, $row_number) {
         
         echo $url;
         #echo $img;
-        if(strpos($url, "https") < 0 || strpos($ftype, "svg") < 0){
+        if(strpos($url, "https") < 0 || strpos($ftype, "svg") < 0 || strpos($ftype, "f30352") < 0){
             continue;
         }
-        else if(strpos($ftype, "jpg") >= 0 || strpos($ftype, "png") >= 0 || strpos($ftype, "png") >= 0 ){
+        else if(strpos($ftype, "jpg") >= 0 || strpos($ftype, "png") >= 0 || strpos($ftype, "gif") >= 0){
             try {
                 echo "<-downloading..\n";
-                if(@file_put_contents($img, file_get_contents($url))){
+                if(file_put_contents($img, file_get_contents($url))){
                     break;
                 }
                 else{
@@ -47,6 +47,9 @@ function get_company_image_from_string($company_name, $row_number) {
             catch (Exception $e){
                 continue;
             }
+        }
+        else{
+            continue;
         }
     }
     #var_dump($url);
