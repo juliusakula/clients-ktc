@@ -5,10 +5,10 @@ function getFileType($file){
     $dotpos = strrpos($thefile, ".");
     return strtolower(substr($thefile, $dotpos + 1));
 }
-                             
-function get_company_image_from_string($company_name, $row_number) {
+
+function query_an_image($company_name){
     $crl = curl_init();
-    $url_company_name = urlencode($company_name. " logo");
+    $url_company_name = urlencode($company_name);
     curl_setopt($crl, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)');
     curl_setopt($crl, CURLOPT_URL, "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q={$url_company_name}&imgsz=large");
     curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
@@ -16,7 +16,11 @@ function get_company_image_from_string($company_name, $row_number) {
 
     $ret = curl_exec($crl);
     curl_close($crl);
-    $data = json_decode($ret);
+    return $ret;
+}
+                             
+function get_company_image_from_string($company_name, $row_number) {
+    $data = json_decode(query_an_image($company_name));
     $img_urls = array();
     $img_names = array();
     foreach ($data->responseData->results as $result) {
@@ -32,7 +36,7 @@ function get_company_image_from_string($company_name, $row_number) {
         echo $url;
         #echo $img;
         if(strpos($url, "https") < 0 || strpos($ftype, "svg") < 0 || strpos($ftype, "f30352") < 0){
-            continue;
+            continue 2;
         }
         else if(strpos($ftype, "jpg") >= 0 || strpos($ftype, "png") >= 0 || strpos($ftype, "gif") >= 0){
             try {
@@ -41,10 +45,12 @@ function get_company_image_from_string($company_name, $row_number) {
                     break;
                 }
                 else{
+                    echo "notif file put??";
                     continue;
                 }
             }
             catch (Exception $e){
+                echo "Caught exceptiom : {$e}";
                 continue;
             }
         }
@@ -54,7 +60,7 @@ function get_company_image_from_string($company_name, $row_number) {
     }
     #var_dump($url);
     #var_dump($img);
-    return $ret;
+    return $data;
 }
 
 //  $results = get_url_contents("walmart, inc");
