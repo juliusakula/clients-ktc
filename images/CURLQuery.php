@@ -8,9 +8,9 @@ function getFileType($file){
 
 function query_an_image($company_name){
     $crl = curl_init();
-    $url_company_name = urlencode($company_name);
+    $url_company_name = urlencode($company_name . " logo");
     curl_setopt($crl, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)');
-    curl_setopt($crl, CURLOPT_URL, "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q={$url_company_name}&imgsz=large");
+    curl_setopt($crl, CURLOPT_URL, "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q={$url_company_name}&imgsz=large&as_filetype=png");
     curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($crl, CURLOPT_CONNECTTIMEOUT, 5);
 
@@ -21,6 +21,7 @@ function query_an_image($company_name){
                              
 function get_company_image_from_string($company_name, $row_number) {
     $data = json_decode(query_an_image($company_name));
+    var_dump($data);
     $img_urls = array();
     $img_names = array();
     foreach ($data->responseData->results as $result) {
@@ -35,10 +36,10 @@ function get_company_image_from_string($company_name, $row_number) {
         
         echo $url;
         #echo $img;
-        if(strpos($url, "https") < 0 || strpos($ftype, "svg") < 0 || strpos($ftype, "f30352") < 0){
+        if(strpos($url, "https") < 0){ //using asfiletype=png
             continue 2;
         }
-        else if(strpos($ftype, "jpg") >= 0 || strpos($ftype, "png") >= 0 || strpos($ftype, "gif") >= 0){
+        else{
             try {
                 echo "<-downloading..\n";
                 if(file_put_contents($img, file_get_contents($url))){
@@ -53,9 +54,6 @@ function get_company_image_from_string($company_name, $row_number) {
                 echo "Caught exceptiom : {$e}";
                 continue;
             }
-        }
-        else{
-            continue;
         }
     }
     #var_dump($url);

@@ -3,13 +3,13 @@
 # Simple DOM HTML
 include('simple_dom_html.php');
 ob_start();
-include('top_200_links.html');
+include('top_1000_links.html');
 include('images/CURLQuery.php');
 // Create DOM from that copypasta
 $RAW_html = ob_get_clean();
 
 #echo $RAW_html;
-ini_set('max_execution_time', 3000); //3000 seconds = 50 minutes !http://stackoverflow.com/a/5164954/3100494
+ini_set('max_execution_time', 30000); //3000 seconds = 50 minutes !http://stackoverflow.com/a/5164954/3100494
 
 $VERBOSE = 2;
 
@@ -37,10 +37,15 @@ foreach($main_html->find('tr > td > a') as $ele){
 // ---------------------------------------------------------------------------------------
 $test_link = $links[0];
 $J = 0;
-$max_loop_count = 200;
-$fp = fopen('top_200_industries.csv', 'w'); //fputcsv at the end of each loop
+$max_loop_count = 1001;
+$fp = fopen('top_1000_industries.csv', 'w'); //fputcsv at the end of each loop
 foreach($links as $link){
-    if($J < $max_loop_count){
+    #if($J < $max_loop_count){
+        #if($J < 200){
+            #echo "skipping: {$J}\n";
+            #$J++;
+            #continue;
+        #}
     ob_start();
 // ---------------------------------------------------------------------------------------
     #echo $link . "<br>";
@@ -79,7 +84,7 @@ foreach($html->find('.seo-company-info > table > tbody tr:nth-child(\'5\') > .se
     }
     if($str == "Name"){
         $name = $html->find('.seo-company-info > table > tbody tr:nth-child(3) > .seo-company-data', $i)->innertext;
-        $name = str_replace(",", "", $name); //remove commas
+        $name = html_entity_decode( str_replace(",", "", $name)); //remove commas
     }
     if($str == "Website"){ 
         $website = $html->find('.seo-company-info > table > tbody tr:nth-child(3) > .seo-company-data', $i)->innertext;
@@ -121,23 +126,24 @@ if ($VERBOSE > 0) echo ", " . $size;
 // ---------------------------------------------------------------------------------------
     
 // deal with industries that we created above ^^;
-$exploded = explode(",", str_replace("<br/>", ",",str_replace("\t", "", str_replace("\n", "", $industries)) ));
+$exploded = explode(",", str_replace("<br/>", ",",str_replace("\t", "", str_replace('\n', "", $industries)) ));
 $clean_industries = array();
 foreach($exploded as $explosion){
     array_push($clean_industries, html_entity_decode(rtrim(  ltrim(preg_replace('/(\s)+/', ' ', $explosion)) )) ); # replace all multi-whitespace substrings with a single whitespace. trim whitespace from left and right. (leaves white space in "Shipping & Distribution")
 }
-if ($VERBOSE > 0) echo ", " . implode(", ", $clean_industries) . "\r\n";    
+if ($VERBOSE > 0) echo ", " . implode(", ", $clean_industries);    
 // ---------------------------------------------------------------------------------------
-
-    fputcsv($fp, explode(",",ob_get_clean()) );
-    get_company_image_from_string($name, $J);
+    $this_line = ob_get_clean();
+    fputcsv($fp, explode(",",$this_line) );
+    #get_company_image_from_string($name, $J);
     $J++;
     if($J % 10){
         sleep(rand(5, 10));
     }
-    echo "<li>" . $J . ":" . $this_to_parse . "<br>";
+    echo $J . ":" . $this_to_parse . "\n";
+    echo $this_line . "\n";
     #break;
-}}
+}#}
 fclose($fp);
 echo "<h1>Now you should check <b>top_200_industries.csv<b></h1>";
 exit();
