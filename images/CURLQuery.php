@@ -20,7 +20,7 @@ function query_an_image($company_name){
 }
                              
 function get_company_image_from_string($company_name, $row_number, $extra="") {
-    $data = json_decode(query_an_image($company_name.$extra));
+    $data = json_decode(query_an_image($company_name . " " . $extra));
     var_dump($data);
     $img_urls = array();
     $img_names = array();
@@ -60,7 +60,40 @@ function get_company_image_from_string($company_name, $row_number, $extra="") {
     #var_dump($img);
     return $data;
 }
-
+                             
+function display_company_image_from_string($company_name, $row_number, $extra="") {
+    $data = json_decode(query_an_image($company_name . " " . $extra));
+    $img_urls = array();
+    $img_names = array();
+    foreach ($data->responseData->results as $result) {
+        $img_urls[] = $result->url;
+        $img_names[] = "/var/www/html/parse-data-dot-com/images/{$row_number}";
+        $results[] = array('url' => $result->url, 'alt' => $result->title);
+        
+        $url = $result->url;
+        $ftype = getFileType($url);
+        #echo $ftype;
+        $img = "/var/www/html/parse-data-dot-com/images/{$row_number}.{$ftype}";
+        
+        echo $url;
+        #echo $img;
+        if(strpos($url, "https") < 0){ //using asfiletype=png
+            continue 2;
+        }
+        else{
+            try {
+                return $url;
+            }
+            catch (Exception $e){
+                echo "Caught exceptiom : {$e}";
+                continue;
+            }
+        }
+    }
+    #var_dump($url);
+    #var_dump($img);
+    return $data;
+}
 //  $results = get_url_contents("walmart, inc");
 //  print_r($results);
 
