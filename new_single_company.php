@@ -16,7 +16,7 @@ foreach($csv_data as $key => $datum){
         $datum[0] .= " {$_REQUEST['extra']}";
     }
     $url .= display_company_image_from_string($datum[0], $key);
+    echo "<h1>image below</h1><img src='{$url}' download='{$id}.png'/>";
     break;
 }
-echo "<h1>image below</h1><img src='{$url}' download='{$id}.png'/>"
 ?>
