@@ -1,4 +1,5 @@
 <?php
+ini_set('max_execution_time', 60); // max 1 min
 include('images/CURLQuery.php');
 $id = $_REQUEST['id'];
 

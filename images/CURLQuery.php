@@ -1,4 +1,6 @@
 <?php
+ini_set('max_execution_time', 60); // max 1 min
+
 function getFileType($file){
     $path_chunks = explode("/", $file);
     $thefile = $path_chunks[count($path_chunks) - 1];
@@ -20,7 +22,7 @@ function query_an_image($company_name){
 }
                              
 function get_company_image_from_string($company_name, $row_number, $extra="") {
-    $data = json_decode(query_an_image($company_name . " " . $extra));
+    $data = json_decode(query_an_image($company_name . $extra));
     var_dump($data);
     $img_urls = array();
     $img_names = array();
