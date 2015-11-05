@@ -11,24 +11,18 @@
 
 foreach($csv_data as $key => $datum){
     $name=$datum[0];
-    echo "$key";
-    echo "$row_name";
-
-
-
     $name=replace_white($name);
-
     $src= "cleaned_1000/{$key}.png";
     $dest="images/{$name}.png";
 
-
     $cp_string="cp {$src} {$dest}";
 
-    exec($cp_string);
+    //change echo's in the loop; make it more interesting.
+    echo "<h1>{$name}</h1> <img src=\"{$dest}\">";
 
-    echo $cp_string;
 
-    echo $key . ":" . $datum[0] . "\n";
+
+
 
 }
 
