@@ -10,7 +10,7 @@ function getFileType($file){
 
 function query_an_image($company_name){
     $crl = curl_init();
-    $url_company_name = urlencode($company_name . " logo");
+    $url_company_name = urlencode($company_name);
     curl_setopt($crl, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)');
     curl_setopt($crl, CURLOPT_URL, "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q={$url_company_name}&imgsz=medium&as_filetype=png");
     curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
@@ -22,7 +22,7 @@ function query_an_image($company_name){
 }
                              
 function get_company_image_from_string($company_name, $row_number, $extra="") {
-    $data = json_decode(query_an_image($company_name . $extra));
+    $data = json_decode(query_an_image($company_name . " " . $extra));
     var_dump($data);
     $img_urls = array();
     $img_names = array();
